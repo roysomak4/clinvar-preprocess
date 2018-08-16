@@ -90,6 +90,9 @@ def get_vcf_fields(filename, out_buffer):
                 counter +=1
                 temp_var_buffer = []
                 temp_arr = line.strip('\n').split('\t')
+                # check if the chromosome field has a valid entry
+                if not is_valid_chr(temp_arr[0]):
+                    continue 
                 temp_var_buffer.append(temp_arr[0])  # chr
                 temp_var_buffer.append(temp_arr[1])  # pos
                 temp_var_buffer.append(temp_arr[3])  # ref
@@ -150,6 +153,14 @@ def read_vcf_file(filename):
         for line in vcf_file:
             yield line
 
+
+def is_valid_chr(chrom):
+    valid_chrom_list = [str(x) for x in range(1,23)]
+    valid_chrom_list.extend(['X', 'Y', 'MT'])
+    valid_chrom_list.extend(['chr' + str(x) for x in range(1,23)])
+    valid_chrom_list.extend(['chrX', 'chrY', 'chrMT'])
+    return chrom in valid_chrom_list
+    
 
 if __name__ == '__main__':
     process_clinvar_db(sys.argv[1:])
